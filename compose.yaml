@@ -8,17 +8,17 @@ services:
     volumes:
       - pritunl_data:/var/lib/pritunl
     networks:
-      - pritunl-vpn_vpn-network
+      - vpn-network
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.pritunl.rule=Host(`vpn.uni-play.ru`)"
-      - "traefik.http.routers.pritunl.entrypoints=websecure"
+      - "traefik.http.routers.pritunl.entrypoints=web"
       - "traefik.http.routers.pritunl.tls.certresolver=myresolver"
       - "traefik.http.services.pritunl.loadbalancer.server.port=9700"
     ports:
-      - "1194:1194/udp" # OpenVPN UDP
-      - "1194:1194/tcp" # OpenVPN TCP
-      - "9700:9700"     # Web UI через Traefik
+      - "1194:1194/udp"
+      - "1194:1194/tcp"
+      - "9700:9700"
 
   mongo:
     image: mongo:4.2
@@ -27,13 +27,14 @@ services:
     volumes:
       - mongo_data:/data/db
     networks:
-      - pritunl-vpn_vpn-network
+      - vpn-network
 
   traefik:
     image: traefik:v2.9
     container_name: traefik
     restart: unless-stopped
     command:
+      - "--api.insecure=true" # Отключить это в production
       - "--providers.docker=true"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
@@ -47,7 +48,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "traefik_data:/letsencrypt"
     networks:
-      - pritunl-vpn_vpn-network
+      - vpn-network
 
 volumes:
   pritunl_data:
@@ -55,5 +56,5 @@ volumes:
   traefik_data:
 
 networks:
-  pritunl-vpn_vpn-network:
+  vpn-network:
     driver: bridge

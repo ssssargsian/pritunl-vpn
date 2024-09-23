@@ -12,7 +12,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.pritunl.rule=Host(`vpn.uni-play.ru`)"
-      - "traefik.http.routers.pritunl.entrypoints=web"
+      - "traefik.http.routers.pritunl.entrypoints=websecure"
       - "traefik.http.routers.pritunl.tls.certresolver=myresolver"
       - "traefik.http.services.pritunl.loadbalancer.server.port=9700"
     ports:
@@ -34,7 +34,6 @@ services:
     container_name: traefik
     restart: unless-stopped
     command:
-      - "--api.insecure=true" # Отключить это в production
       - "--providers.docker=true"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"

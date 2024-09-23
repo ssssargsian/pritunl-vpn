@@ -1,0 +1,60 @@
+services:
+  pritunl:
+    image: jippi/pritunl:latest
+    container_name: pritunl
+    restart: unless-stopped
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/pritunl
+    volumes:
+      - pritunl_data:/var/lib/pritunl
+    networks:
+      - vpn-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pritunl.rule=Host(`vpn.uni-play.ru`)"
+      - "traefik.http.routers.pritunl.entrypoints=websecure"
+      - "traefik.http.routers.pritunl.tls.certresolver=myresolver"
+      - "traefik.http.services.pritunl.loadbalancer.server.port=9700"
+    ports:
+      - "1194:1194/udp" # OpenVPN UDP
+      - "1194:1194/tcp" # OpenVPN TCP
+      - "9700:9700"     # Web UI через Traefik
+
+  mongo:
+    image: mongo:4.2
+    container_name: mongo
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - vpn-network
+
+  traefik:
+    image: traefik:v2.9
+    container_name: traefik
+    restart: unless-stopped
+    command:
+      - "--api.insecure=true" # Отключить это в production
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=your-email@example.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "traefik_data:/letsencrypt"
+    networks:
+      - vpn-network
+
+volumes:
+  pritunl_data:
+  mongo_data:
+  traefik_data:
+
+networks:
+  vpn-network:
+    driver: bridge

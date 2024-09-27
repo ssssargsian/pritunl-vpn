@@ -17,7 +17,7 @@ services:
       - "traefik.http.routers.pritunl.rule=Host(`vpn.uni-play.ru`)"
       - "traefik.http.routers.pritunl.entrypoints=websecure"
       - "traefik.http.routers.pritunl.tls=true"
-      - "traefik.http.services.pritunl-vpn.loadbalancer.server.port=9700"
+      - "traefik.http.services.pritunl.loadbalancer.server.port=9700"
 
   mongo:
     image: mongo:latest

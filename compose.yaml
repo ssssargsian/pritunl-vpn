@@ -17,7 +17,6 @@ services:
       - "traefik.http.routers.pritunl.rule=Host(`vpn.uni-play.ru`)"
       - "traefik.http.routers.pritunl.entrypoints=websecure"
       - "traefik.http.routers.pritunl.tls=true"
-      - "traefik.http.routers.pritunl.service=pritunl-vpn"
       - "traefik.http.services.pritunl-vpn.loadbalancer.server.port=9700" # Порт веб-интерфейса Pritunl
 
   mongo:
@@ -41,7 +40,6 @@ services:
       - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
       - "--certificatesresolvers.myresolver.acme.email=ssssargsian@gmail.com"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
-      - "--log.level=INFO"  # Включение логирования
     ports:
       - "80:80"
       - "443:443"
@@ -54,7 +52,7 @@ services:
       - "traefik.http.routers.traefik.rule=Host(`vpn.uni-play.ru`)"
       - "traefik.http.routers.traefik.entrypoints=websecure"
       - "traefik.http.routers.traefik.tls.certresolver=myresolver"
-      - "traefik.http.routers.traefik.service=api@internal" # Traefik dashboard
+      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
 
 networks:
   vpn-net:

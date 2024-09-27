@@ -17,8 +17,8 @@ services:
       - "traefik.http.routers.pritunl.rule=Host(`vpn.uni-play.ru`)"
       - "traefik.http.routers.pritunl.entrypoints=websecure"
       - "traefik.http.routers.pritunl.tls=true"
-      - "traefik.http.services.pritunl.loadbalancer.server.port=9700" 
-  
+      - "traefik.http.services.pritunl-vpn.loadbalancer.server.port=9700"
+
   mongo:
     image: mongo:latest
     container_name: mongo
@@ -33,7 +33,7 @@ services:
     container_name: traefik
     restart: always
     command:
-      - "--api.insecure=true"  # Traefik веб интерфейс
+      - "--api.insecure=true"
       - "--providers.docker=true"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
@@ -43,7 +43,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "8080:8080"  # Порт для Traefik веб интерфейса
+      - "8080:8080" 
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./letsencrypt:/letsencrypt
@@ -53,6 +53,8 @@ services:
       - "traefik.http.routers.traefik.entrypoints=websecure"
       - "traefik.http.routers.traefik.tls.certresolver=myresolver"
       - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+    networks:
+      - vpn-net
 
 networks:
   vpn-net:

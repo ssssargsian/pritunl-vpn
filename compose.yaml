@@ -50,7 +50,7 @@ services:
 
 networks:
   vpn-net:
-    driver: bridge
+    name: vpn-net
 
 volumes:
   pritunl-data:

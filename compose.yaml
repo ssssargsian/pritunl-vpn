@@ -14,7 +14,7 @@ services:
       - pritunl-data:/var/lib/pritunl
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.pritunl.rule=Host(`vpn.uni-play.ru`)"
+      - "traefik.http.routers.pritunl.rule=Host(`vp.uni-play.ru`)"
       - "traefik.http.routers.pritunl.entrypoints=websecure"
       - "traefik.http.routers.pritunl.tls=true"
       - "traefik.http.services.pritunl-vpn.loadbalancer.server.port=9700"
@@ -49,7 +49,7 @@ services:
       - ./letsencrypt:/letsencrypt
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik.rule=Host(`vpn.uni-play.ru`)"
+      - "traefik.http.routers.traefik.rule=Host(`vp.uni-play.ru`)"
       - "traefik.http.routers.traefik.entrypoints=websecure"
       - "traefik.http.routers.traefik.tls.certresolver=myresolver"
       - "traefik.http.services.traefik.loadbalancer.server.port=8080"
